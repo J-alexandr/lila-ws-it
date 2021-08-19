@@ -2,6 +2,7 @@ package lila.ws
 
 import chess.Color
 import com.github.blemale.scaffeine.{ AsyncLoadingCache, Scaffeine }
+import com.typesafe.scalalogging.Logger
 import com.typesafe.config.Config
 import org.joda.time.DateTime
 import reactivemongo.api.bson._
@@ -15,6 +16,7 @@ import scala.util.{ Success, Try }
 final class Mongo(config: Config)(implicit executionContext: ExecutionContext) {
 
   private val driver = new AsyncDriver(Some(config.getConfig("reactivemongo")))
+  private val logger = Logger(getClass)
 
   private val mainConnection =
     MongoConnection.fromString(config.getString("mongo.uri")) flatMap { parsedUri =>
@@ -85,7 +87,7 @@ final class Mongo(config: Config)(implicit executionContext: ExecutionContext) {
     BSONDocument("is" -> true, "us" -> true, "tid" -> true, "sid" -> true, "iid" -> true)
 
   private val gameCache: AsyncLoadingCache[Game.Id, Option[Game.Round]] = Scaffeine()
-    .expireAfterWrite(10.minutes)
+    .expireAfterWrite(1.second)
     .buildAsyncFuture { id =>
       gameColl flatMap {
         _.find(

@@ -87,7 +87,9 @@ final class Controller(
             credits = 60,
             interval = 15.seconds
           )
-        case _ => notFound
+        case _ =>
+          logger.info(s"Study not found $id, $user")
+          notFound
       }
     }
 
@@ -105,7 +107,9 @@ final class Controller(
             credits = 50,
             interval = 20.seconds
           )
-        case _ => notFound
+        case _ =>
+          logger.info(s"roundWatch not found $id, $user")
+          notFound
       }
     }
 
@@ -124,7 +128,9 @@ final class Controller(
             credits = 100,
             interval = 20.seconds
           )
-        case _ => notFound
+        case _ =>
+          logger.info(s"roundPlay not found $id, $user")
+          notFound
       }
     }
 

@@ -35,7 +35,7 @@ object Game {
   case class Round(id: Id, players: Color.Map[Player], ext: Option[RoundExt]) {
     def player(id: PlayerId, userId: Option[User.ID]): Option[RoundPlayer] =
       Color.all.collectFirst {
-        case c if players(c).id == id && players(c).userId == userId => RoundPlayer(id, c, ext)
+        case c if players(c).id == id /*&& players(c).userId == userId*/ => RoundPlayer(id, c, ext)
       }
   }
 

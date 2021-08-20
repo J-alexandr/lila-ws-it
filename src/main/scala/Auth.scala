@@ -1,15 +1,22 @@
 package lila.ws
 
+import com.typesafe.scalalogging.Logger
 import reactivemongo.api.bson._
-import scala.concurrent.{ ExecutionContext, Future }
 
+import scala.concurrent.{ExecutionContext, Future}
 import util.RequestHeader
 
 final class Auth(mongo: Mongo, seenAt: SeenAtUpdate)(implicit executionContext: ExecutionContext) {
 
   import Auth._
+  private val logger = Logger(getClass)
 
-  def apply(req: RequestHeader): Future[Option[User]] =
+  def apply(req: RequestHeader): Future[Option[User]] = getUser(req).map { user =>
+    logger.info(s"Authentication from request: $user")
+    user
+  }
+
+  private def getUser(req: RequestHeader): Future[Option[User]] =
     if (req.flag contains Flag.api) Future successful None
     else
       sessionIdFromReq(req) match {

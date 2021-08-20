@@ -17,7 +17,10 @@ final class Auth(mongo: Mongo, seenAt: SeenAtUpdate)(implicit executionContext: 
   }
 
   private def getUser(req: RequestHeader): Future[Option[User]] =
-    if (req.flag contains Flag.api) Future successful None
+    if (req.flag contains Flag.api) {
+      logger.info(s"Session id not extracted. Request flag: ${req.flag}")
+      Future successful None
+    }
     else
       sessionIdFromReq(req) map { sid =>
         logger.info(s"Session id: $sid")

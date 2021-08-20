@@ -19,7 +19,10 @@ final class Auth(mongo: Mongo, seenAt: SeenAtUpdate)(implicit executionContext: 
   private def getUser(req: RequestHeader): Future[Option[User]] =
     if (req.flag contains Flag.api) Future successful None
     else
-      sessionIdFromReq(req) match {
+      sessionIdFromReq(req) map { sid =>
+        logger.info(s"Session id: $sid")
+        sid
+      } match {
         case Some(sid) if sid startsWith appealPrefix => Future successful None
         case Some(sid) =>
           mongo.security {

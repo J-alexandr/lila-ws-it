@@ -221,11 +221,11 @@ final class Controller(
     )
 
   private def WebSocket(req: RequestHeader)(f: Sri => Option[User] => Response): Response =
-    CSRF.check(req) {
+//    CSRF.check(req) {
       ValidSri(req) { sri =>
         auth(req) flatMap f(sri)
       }
-    }
+//    }
 
   private def ValidSri(req: RequestHeader)(f: Sri => Response): Response =
     req.sri match {

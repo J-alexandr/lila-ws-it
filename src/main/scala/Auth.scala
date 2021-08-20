@@ -58,13 +58,16 @@ object Auth {
   private val sidKey         = "sid"
   private val sidRegex       = s"""$sidKey=(\\w+)""".r.unanchored
   private val appealPrefix   = "appeal:"
+  private val logger = Logger(getClass)
 
-  def sessionIdFromReq(req: RequestHeader): Option[String] =
+  def sessionIdFromReq(req: RequestHeader): Option[String] = {
+    logger.info(s"Extracting sessionId from request: cookies - ${req.cookie(cookieName)}, query - ${req.queryParameter(sessionIdKey)}")
     req cookie cookieName flatMap {
       case sessionIdRegex(id) => Some(id)
       case _                  => None
     } orElse
       req.queryParameter(sessionIdKey)
+  }
 
   def sidFromReq(req: RequestHeader): Option[String] =
     req cookie cookieName flatMap {
